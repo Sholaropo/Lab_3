@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "name": "John Smith",
+    "department": "Engineering",
+    "position": "Senior Developer",
+    "email": "john.smith@pixellriver.com"
+  },
+  {
+    "id": 2,
+    "name": "Sarah Johnson",
+    "department": "Marketing",
+    "position": "Marketing Manager",
+    "email": "sarah.johnson@pixellriver.com"
+  },
+  {
+    "id": 3,
+    "name": "Michael Chen",
+    "department": "Engineering",
+    "position": "DevOps Engineer",
+    "email": "michael.chen@pixellriver.com"
+  },
+  {
+    "id": 4,
+    "name": "Emily Davis",
+    "department": "HR",
+    "position": "HR Specialist",
+    "email": "emily.davis@pixellriver.com"
+  },
+  {
+    "id": 5,
+    "name": "David Wilson",
+    "department": "Finance",
+    "position": "Financial Analyst",
+    "email": "david.wilson@pixellriver.com"
+  },
+  {
+    "id": 6,
+    "name": "Lisa Brown",
+    "department": "Engineering",
+    "position": "Frontend Developer",
+    "email": "lisa.brown@pixellriver.com"
+  }
+]

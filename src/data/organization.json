@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "role": "Chief Executive Officer",
+    "name": "Dr. Sarah Mitchell",
+    "description": "Responsible for overall strategic direction and leadership of Pixell River Financial. Oversees all major business decisions and represents the company to stakeholders."
+  },
+  {
+    "id": 2,
+    "role": "Chief Financial Officer",
+    "name": "Michael Roberts",
+    "description": "Manages the company's financial planning, record-keeping, and financial reporting. Ensures compliance with financial regulations and oversees accounting operations."
+  },
+  {
+    "id": 3,
+    "role": "Chief Operating Officer",
+    "name": "Jennifer Chen",
+    "description": "Responsible for daily operations and ensuring operational efficiency. Manages internal processes and coordinates between different departments."
+  },
+  {
+    "id": 4,
+    "role": "Head of Investment Services",
+    "name": "David Thompson",
+    "description": "Leads the investment services division, develops investment strategies, and manages client portfolios. Oversees investment advisors and portfolio managers."
+  },
+  {
+    "id": 5,
+    "role": "Head of Risk Management",
+    "name": "Lisa Wang",
+    "description": "Identifies, analyzes, and mitigates financial risks. Develops risk management policies and ensures regulatory compliance across all operations."
+  }
+]
