@@ -1,77 +1,44 @@
-import type { Employee } from "../types/Employee";
-import type { Role } from "../types/Role";
+import * as employeeRepo from "../apis/employeeRepo";
+import * as roleRepo from "../apis/roleRepo";
 
-export function validateEmployee(
-  employeeData: Omit<Employee, "id">,
-  existingEmployees: Employee[]
-): Map<string, string> {
-  const errors = new Map<string, string>();
+export async function createEmployee(employee) {
+  return await employeeRepo.createEmployee(employee);
+}
 
-  if (!employeeData.name || employeeData.name.trim().length < 3) {
+export async function createRole(role) {
+  return await roleRepo.createRole(role);
+}
+
+export function validateEmployee(employee) {
+  const errors = new Map();
+
+  if (!employee.name?.trim() || employee.name.trim().length < 3) {
     errors.set("name", "Name must be at least 3 characters");
   }
 
-  if (!employeeData.department || employeeData.department.trim().length < 3) {
-    errors.set("department", "Department must be at least 3 characters");
-  }
-
-  if (!employeeData.position || employeeData.position.trim().length < 3) {
+  if (!employee.position?.trim() || employee.position.trim().length < 3) {
     errors.set("position", "Position must be at least 3 characters");
   }
 
-  if (!employeeData.email || !employeeData.email.trim()) {
-    errors.set("email", "Email is required");
-  } else {
-    const hasAtSign = employeeData.email.includes("@");
-    const hasDot = employeeData.email.includes(".");
-    if (!hasAtSign || !hasDot) {
-      errors.set("email", "Email must be valid");
-    }
-  }
-
-  if (employeeData.position && employeeData.department) {
-    const positionTaken = existingEmployees.some(
-      (emp) =>
-        emp.position === employeeData.position &&
-        emp.department === employeeData.department
-    );
-
-    if (positionTaken) {
-      errors.set(
-        "position",
-        `The position "${employeeData.position}" is already filled in ${employeeData.department}`
-      );
+  if (employee.position && employee.department) {
+    if (employeeRepo.isPositionFilled(employee.position, employee.department)) {
+      errors.set("position", "Position already filled");
     }
   }
 
   return errors;
 }
 
-export function validateRole(
-  roleData: Omit<Role, "id">,
-  existingRoles: Role[]
-): Map<string, string> {
-  const errors = new Map<string, string>();
+export function validateRole(role) {
+  const errors = new Map();
 
-  if (!roleData.name || roleData.name.trim().length < 3) {
+  if (!role.name?.trim() || role.name.trim().length < 3) {
     errors.set("name", "Role name must be at least 3 characters");
   }
 
-  if (!roleData.department || roleData.department.trim().length < 3) {
-    errors.set("department", "Department must be at least 3 characters");
-  }
-
-  if (roleData.name && roleData.department) {
-    const alreadyExists = existingRoles.some(
-      (role) =>
-        role.name === roleData.name && role.department === roleData.department
-    );
-
-    if (alreadyExists) {
-      errors.set(
-        "name",
-        `Role "${roleData.name}" already exists in ${roleData.department}`
-      );
+  if (role.name && role.department) {
+    if (roleRepo.roleExists(role.name, role.department)) {
+      errors.set("name", "Role already exists");
     }
   }
 
