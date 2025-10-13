@@ -130,6 +130,12 @@ export const EmployeeList: React.FC = () => {
               style={{ width: "100%", padding: "8px", fontSize: "14px" }}
             >
               <option value="">-- Select Department --</option>
+
+            <option value="computer science"> computer science </option>
+            <option value="Management"> Management </option>
+            <option value="IT Developer"> IT Developer </option>
+            <option value="Physics"> Physics </option>
+          
               {departments.map((dept) => (
                 <option key={dept} value={dept}>
                   {dept}
@@ -152,9 +158,11 @@ export const EmployeeList: React.FC = () => {
               value={employeeFormData.position}
               onChange={(e) => updateField("position", e.target.value)}
               style={{ width: "100%", padding: "8px", fontSize: "14px" }}
-              disabled={!employeeFormData.department}
+          
             >
               <option value="">-- Select Position --</option>
+              <option value="professor"> professor </option>
+              
               {positions.map((pos) => (
                 <option key={pos} value={pos}>
                   {pos}

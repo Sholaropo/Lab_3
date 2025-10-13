@@ -10,10 +10,8 @@ export const Organization = () => {
 
   const { formData, errors, updateField, handleSubmit, resetForm } = useEntryForm("role");
 
-  // Cast formData to RoleFormData for type safety
   const roleFormData = formData as { name: string; department: string; description: string };
 
-  // Load roles on mount
   useEffect(() => {
     loadRoles();
   }, []);
