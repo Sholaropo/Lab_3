@@ -1,16 +1,16 @@
 import * as employeeRepo from "../apis/employeeRepo";
 import * as roleRepo from "../apis/roleRepo";
 
-export async function createEmployee(employee) {
+export async function createEmployee(employee: any) {
   return await employeeRepo.createEmployee(employee);
 }
 
-export async function createRole(role) {
+export async function createRole(role: any) {
   return await roleRepo.createRole(role);
 }
 
-export function validateEmployee(employee) {
-  const errors = new Map();
+export async function validateEmployee(employee: any) {
+  const errors = new Map<string, string>();
 
   if (!employee.name?.trim() || employee.name.trim().length < 3) {
     errors.set("name", "Name must be at least 3 characters");
@@ -21,7 +21,7 @@ export function validateEmployee(employee) {
   }
 
   if (employee.position && employee.department) {
-    if (employeeRepo.isPositionFilled(employee.position, employee.department)) {
+    if (await employeeRepo.isPositionFilled(employee.position, employee.department)) {
       errors.set("position", "Position already filled");
     }
   }
@@ -29,15 +29,15 @@ export function validateEmployee(employee) {
   return errors;
 }
 
-export function validateRole(role) {
-  const errors = new Map();
+export async function validateRole(role: any) {
+  const errors = new Map<string, string>();
 
   if (!role.name?.trim() || role.name.trim().length < 3) {
     errors.set("name", "Role name must be at least 3 characters");
   }
 
   if (role.name && role.department) {
-    if (roleRepo.roleExists(role.name, role.department)) {
+    if (await roleRepo.roleExists(role.name, role.department)) {
       errors.set("name", "Role already exists");
     }
   }

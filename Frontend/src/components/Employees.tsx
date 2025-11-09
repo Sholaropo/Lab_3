@@ -11,14 +11,14 @@ export const EmployeeList: React.FC = () => {
   const [departments, setDepartments] = useState<string[]>([]);
   const [positions, setPositions] = useState<string[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const { formData, errors, updateField, handleSubmit, resetForm } = useEntryForm("employee");
 
   const employeeFormData = formData as { name: string; department: string; position: string; email: string };
 
   useEffect(() => {
-    loadEmployees();
-    loadDepartments();
+    loadInitialData();
   }, []);
 
   useEffect(() => {
@@ -29,18 +29,26 @@ export const EmployeeList: React.FC = () => {
     }
   }, [employeeFormData.department]);
 
-  const loadEmployees = () => {
-    setEmployees(employeeRepo.getEmployees());
+  const loadInitialData = async () => {
+    setLoading(true);
+    await loadEmployees();
+    await loadDepartments();
+    setLoading(false);
   };
 
-  const loadDepartments = () => {
-    const roles = roleRepo.getRoles();
+  const loadEmployees = async () => {
+    const data = await employeeRepo.getEmployees();
+    setEmployees(data);
+  };
+
+  const loadDepartments = async () => {
+    const roles = await roleRepo.getRoles();
     const uniqueDepts = [...new Set(roles.map((role: Role) => role.department))];
     setDepartments(uniqueDepts);
   };
 
-  const loadPositionsForDepartment = (department: string) => {
-    const roles = roleRepo.getRolesByDepartment(department);
+  const loadPositionsForDepartment = async (department: string) => {
+    const roles = await roleRepo.getRolesByDepartment(department);
     setPositions(roles.map((role: Role) => role.name));
   };
 
@@ -48,15 +56,15 @@ export const EmployeeList: React.FC = () => {
     e.preventDefault();
     const success = await handleSubmit();
     if (success) {
-      loadEmployees();
+      await loadEmployees();
       setShowForm(false);
       resetForm();
     }
   };
 
-  const handleDelete = (id: string) => {
-    employeeRepo.deleteEmployee(id);
-    loadEmployees();
+  const handleDelete = async (id: string) => {
+    await employeeRepo.deleteEmployee(id);
+    await loadEmployees();
   };
   
   const filteredEmployees = employees.filter((employee) => {
@@ -67,6 +75,10 @@ export const EmployeeList: React.FC = () => {
       employee.position.toLowerCase().includes(searchLower)
     );
   });
+
+  if (loading) {
+    return <div style={{ textAlign: 'center', padding: '20px' }}>Loading...</div>;
+  }
 
   return (
     <div className="employee-section">
@@ -130,11 +142,10 @@ export const EmployeeList: React.FC = () => {
               style={{ width: "100%", padding: "8px", fontSize: "14px" }}
             >
               <option value="">-- Select Department --</option>
-
-            <option value="computer science"> computer science </option>
-            <option value="Management"> Management </option>
-            <option value="IT Developer"> IT Developer </option>
-            <option value="Physics"> Physics </option>
+              <option value="computer science"> computer science </option>
+              <option value="Management"> Management </option>
+              <option value="IT Developer"> IT Developer </option>
+              <option value="Physics"> Physics </option>
           
               {departments.map((dept) => (
                 <option key={dept} value={dept}>
@@ -162,6 +173,10 @@ export const EmployeeList: React.FC = () => {
             >
               <option value="">-- Select Position --</option>
               <option value="professor"> professor </option>
+              <option value="assistant professor"> assistant professor </option>
+              <option value="lab technician"> lab technician </option>
+              <option value="researcher"> researcher </option>
+            
               
               {positions.map((pos) => (
                 <option key={pos} value={pos}>

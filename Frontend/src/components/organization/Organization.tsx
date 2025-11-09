@@ -7,6 +7,7 @@ export const Organization = () => {
   const [roles, setRoles] = useState<Role[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const { formData, errors, updateField, handleSubmit, resetForm } = useEntryForm("role");
 
@@ -16,8 +17,11 @@ export const Organization = () => {
     loadRoles();
   }, []);
 
-  const loadRoles = () => {
-    setRoles(roleRepo.getRoles());
+  const loadRoles = async () => {
+    setLoading(true);
+    const data = await roleRepo.getRoles();
+    setRoles(data);
+    setLoading(false);
   };
 
   const toggleExpand = (id: string) => {
@@ -28,16 +32,20 @@ export const Organization = () => {
     e.preventDefault();
     const success = await handleSubmit();
     if (success) {
-      loadRoles();
+      await loadRoles();
       setShowForm(false);
       resetForm();
     }
   };
 
-  const handleDelete = (id: string) => {
-    roleRepo.deleteRole(id);
-    loadRoles();
+  const handleDelete = async (id: string) => {
+    await roleRepo.deleteRole(id);
+    await loadRoles();
   };
+
+  if (loading) {
+    return <div style={{ textAlign: 'center', padding: '20px' }}>Loading...</div>;
+  }
 
   return (
     <div className="organization-section">
