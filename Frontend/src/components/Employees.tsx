@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "@clerk/clerk-react";
 import { useEntryForm } from "../hooks/useEntryForm";
 import * as employeeRepo from "../apis/employeeRepo";
 import * as roleRepo from "../apis/roleRepo";
@@ -6,6 +7,7 @@ import type { Employee } from "../types/Employee";
 import type { Role } from "../types/Role";
 
 export const EmployeeList: React.FC = () => {
+  const { getToken } = useAuth();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [departments, setDepartments] = useState<string[]>([]);
@@ -37,18 +39,18 @@ export const EmployeeList: React.FC = () => {
   };
 
   const loadEmployees = async () => {
-    const data = await employeeRepo.getEmployees();
+    const data = await employeeRepo.getEmployees(getToken);
     setEmployees(data);
   };
 
   const loadDepartments = async () => {
-    const roles = await roleRepo.getRoles();
+    const roles = await roleRepo.getRoles(getToken);
     const uniqueDepts = [...new Set(roles.map((role: Role) => role.department))];
     setDepartments(uniqueDepts);
   };
 
   const loadPositionsForDepartment = async (department: string) => {
-    const roles = await roleRepo.getRolesByDepartment(department);
+    const roles = await roleRepo.getRolesByDepartment(department, getToken);
     setPositions(roles.map((role: Role) => role.name));
   };
 
@@ -63,7 +65,7 @@ export const EmployeeList: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    await employeeRepo.deleteEmployee(id);
+    await employeeRepo.deleteEmployee(id, getToken);
     await loadEmployees();
   };
   
@@ -173,10 +175,6 @@ export const EmployeeList: React.FC = () => {
             >
               <option value="">-- Select Position --</option>
               <option value="professor"> professor </option>
-              <option value="assistant professor"> assistant professor </option>
-              <option value="lab technician"> lab technician </option>
-              <option value="researcher"> researcher </option>
-            
               
               {positions.map((pos) => (
                 <option key={pos} value={pos}>

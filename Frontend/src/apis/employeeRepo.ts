@@ -1,14 +1,38 @@
 const API = "http://localhost:3000/api/employees";
 
-export async function getEmployees() {
-  const res = await fetch(API);
+// Helper to get token - MUST be called from a component with useAuth
+export async function getEmployees(getToken: () => Promise<string | null>) {
+  const token = await getToken();
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  const res = await fetch(API, { headers });
+  
+  if (!res.ok) {
+    throw new Error('Failed to fetch employees');
+  }
+  
   return await res.json();
 }
 
-export async function createEmployee(employee: any) {
+export async function createEmployee(employee: any, getToken: () => Promise<string | null>) {
+  const token = await getToken();
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
   const res = await fetch(API, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(employee)
   });
   
@@ -20,8 +44,20 @@ export async function createEmployee(employee: any) {
   return await res.json();
 }
 
-export async function deleteEmployee(id: string) {
-  const res = await fetch(`${API}/${id}`, { method: 'DELETE' });
+export async function deleteEmployee(id: string, getToken: () => Promise<string | null>) {
+  const token = await getToken();
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  const res = await fetch(`${API}/${id}`, { 
+    method: 'DELETE',
+    headers
+  });
   
   if (!res.ok) {
     const error = await res.json();
@@ -31,7 +67,7 @@ export async function deleteEmployee(id: string) {
   return await res.json();
 }
 
-export async function isPositionFilled(position: string, department: string) {
-  const employees = await getEmployees();
+export async function isPositionFilled(position: string, department: string, getToken: () => Promise<string | null>) {
+  const employees = await getEmployees(getToken);
   return employees.some((e: any) => e.position === position && e.department === department);
 }

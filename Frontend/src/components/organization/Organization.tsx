@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "@clerk/clerk-react";
 import { useEntryForm } from "../../hooks/useEntryForm";
 import * as roleRepo from "../../apis/roleRepo";
 import type { Role } from "../../types/Role";
 
 export const Organization = () => {
+  const { getToken } = useAuth();
   const [roles, setRoles] = useState<Role[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -19,7 +21,7 @@ export const Organization = () => {
 
   const loadRoles = async () => {
     setLoading(true);
-    const data = await roleRepo.getRoles();
+    const data = await roleRepo.getRoles(getToken);
     setRoles(data);
     setLoading(false);
   };
@@ -39,7 +41,7 @@ export const Organization = () => {
   };
 
   const handleDelete = async (id: string) => {
-    await roleRepo.deleteRole(id);
+    await roleRepo.deleteRole(id, getToken);
     await loadRoles();
   };
 
