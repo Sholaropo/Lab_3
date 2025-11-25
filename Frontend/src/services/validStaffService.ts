@@ -1,15 +1,16 @@
+import { useAuth } from "@clerk/clerk-react";
 import * as employeeRepo from "../apis/employeeRepo";
 import * as roleRepo from "../apis/roleRepo";
 
-export async function createEmployee(employee: any) {
-  return await employeeRepo.createEmployee(employee);
+export async function createEmployee(employee: any, getToken: () => Promise<string | null>) {
+  return await employeeRepo.createEmployee(employee, getToken);
 }
 
-export async function createRole(role: any) {
-  return await roleRepo.createRole(role);
+export async function createRole(role: any, getToken: () => Promise<string | null>) {
+  return await roleRepo.createRole(role, getToken);
 }
 
-export async function validateEmployee(employee: any) {
+export async function validateEmployee(employee: any, getToken: () => Promise<string | null>) {
   const errors = new Map<string, string>();
 
   if (!employee.name?.trim() || employee.name.trim().length < 3) {
@@ -21,7 +22,7 @@ export async function validateEmployee(employee: any) {
   }
 
   if (employee.position && employee.department) {
-    if (await employeeRepo.isPositionFilled(employee.position, employee.department)) {
+    if (await employeeRepo.isPositionFilled(employee.position, employee.department, getToken)) {
       errors.set("position", "Position already filled");
     }
   }
@@ -29,7 +30,7 @@ export async function validateEmployee(employee: any) {
   return errors;
 }
 
-export async function validateRole(role: any) {
+export async function validateRole(role: any, getToken: () => Promise<string | null>) {
   const errors = new Map<string, string>();
 
   if (!role.name?.trim() || role.name.trim().length < 3) {
@@ -37,7 +38,7 @@ export async function validateRole(role: any) {
   }
 
   if (role.name && role.department) {
-    if (await roleRepo.roleExists(role.name, role.department)) {
+    if (await roleRepo.roleExists(role.name, role.department, getToken)) {
       errors.set("name", "Role already exists");
     }
   }

@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useAuth } from "@clerk/clerk-react";
 import * as staffService from "../services/validStaffService";
 
 type FormType = "employee" | "role";
 
 export function useEntryForm(formType: FormType) {
+  const { getToken } = useAuth();
+  
   const emptyForm = formType === "employee" 
     ? { name: "", department: "", position: "", email: "" }
     : { name: "", department: "", description: "" };
@@ -20,10 +23,16 @@ export function useEntryForm(formType: FormType) {
     }
   };
 
+  const resetForm = () => {
+    setFormData(emptyForm);
+    setErrors(new Map());
+  };
+
   const handleSubmit = async () => {
+    // Await validation since it's now async
     const validationErrors = formType === "employee"
-      ? staffService.validateEmployee(formData)
-      : staffService.validateRole(formData);
+      ? await staffService.validateEmployee(formData, getToken)
+      : await staffService.validateRole(formData, getToken);
 
     setErrors(validationErrors);
 
@@ -31,17 +40,18 @@ export function useEntryForm(formType: FormType) {
 
     try {
       if (formType === "employee") {
-        await staffService.createEmployee(formData);
+        await staffService.createEmployee(formData, getToken);
       } else {
-        await staffService.createRole(formData);
+        await staffService.createRole(formData, getToken);
       }
       setFormData(emptyForm);
       setErrors(new Map());
       return true;
     } catch (error) {
+      console.error('Error submitting form:', error);
       return false;
     }
   };
 
-  return { formData, errors, updateField, handleSubmit };
+  return { formData, errors, updateField, handleSubmit, resetForm };
 }
