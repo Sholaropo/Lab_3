@@ -12,7 +12,7 @@ export function useEntryForm(formType: FormType) {
     : { name: "", department: "", description: "" };
 
   const [formData, setFormData] = useState(emptyForm);
-  const [errors, setErrors] = useState(new Map());
+  const [errors, setErrors] = useState(new Map<string, string>());
 
   const updateField = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -29,10 +29,14 @@ export function useEntryForm(formType: FormType) {
   };
 
   const handleSubmit = async () => {
-    // Await validation since it's now async
-    const validationErrors = formType === "employee"
-      ? await staffService.validateEmployee(formData, getToken)
-      : await staffService.validateRole(formData, getToken);
+    // AWAIT the validation - it's async!
+    let validationErrors: Map<string, string>;
+    
+    if (formType === "employee") {
+      validationErrors = await staffService.validateEmployee(formData, getToken);
+    } else {
+      validationErrors = await staffService.validateRole(formData, getToken);
+    }
 
     setErrors(validationErrors);
 
@@ -44,8 +48,7 @@ export function useEntryForm(formType: FormType) {
       } else {
         await staffService.createRole(formData, getToken);
       }
-      setFormData(emptyForm);
-      setErrors(new Map());
+      resetForm();
       return true;
     } catch (error) {
       console.error('Error submitting form:', error);
