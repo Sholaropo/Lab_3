@@ -45,7 +45,7 @@ export const EmployeeList: React.FC = () => {
 
   const loadDepartments = async () => {
     const roles = await roleRepo.getRoles(getToken);
-    const uniqueDepts = [...new Set(roles.map((role: Role) => role.department))];
+    const uniqueDepts = Array.from(new Set(roles.map((role: Role) => role.department)));
     setDepartments(uniqueDepts);
   };
 

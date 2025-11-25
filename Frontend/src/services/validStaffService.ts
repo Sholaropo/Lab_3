@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/clerk-react";
 import * as employeeRepo from "../apis/employeeRepo";
 import * as roleRepo from "../apis/roleRepo";
 
