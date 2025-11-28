@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5173', 'fullstacklab-mocha.vercel.app'],
+  origin: ['http://localhost:5173', 'lab-frontend-six.vercel.app'],
   credentials: true
 }));
 
